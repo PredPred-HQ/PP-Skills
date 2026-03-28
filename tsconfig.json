@@ -4,8 +4,6 @@
     "module": "CommonJS",
     "moduleResolution": "node",
     "lib": ["ES2022"],
-    "outDir": "./dist",
-    "rootDir": "./src",
     "strict": true,
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -21,6 +19,9 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "tests"]
+  "files": [],
+  "references": [
+    { "path": "./skills/ppa-market-skill" },
+    { "path": "./skills/predp-red-x402-payment" }
+  ]
 }

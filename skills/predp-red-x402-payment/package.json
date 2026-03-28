@@ -1,9 +1,8 @@
 {
   "name": "predp-red-x402-payment",
   "version": "1.0.0",
-  "description": "PredP.red x402 Payment Skill",
+  "description": "PredP.red payment skill that supports x402 payment with USDT on X Layer",
   "main": "dist/index.js",
-  "types": "dist/index.d.ts",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
@@ -15,9 +14,8 @@
     "predp.red",
     "x402",
     "payment",
-    "skill",
-    "ai",
-    "nlp"
+    "usdt",
+    "xlayer"
   ],
   "author": "",
   "license": "MIT",
@@ -38,9 +36,5 @@
   },
   "engines": {
     "node": ">=18.0.0"
-  },
-  "repository": {
-    "type": "git",
-    "url": ""
   }
 }

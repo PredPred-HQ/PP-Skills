@@ -15,12 +15,8 @@ export interface AgenticWalletOptions {
 }
 
 export class AgenticWallet {
-  private chainId: number;
-  private rpcUrl?: string;
-
-  constructor(options: AgenticWalletOptions) {
-    this.chainId = options.chainId || 196; // X Layer default
-    this.rpcUrl = options.rpcUrl;
+  constructor(_options: AgenticWalletOptions) {
+    // Options are stored but not used in this simplified implementation
   }
 
   /**
@@ -80,7 +76,7 @@ export class AgenticWallet {
   /**
    * Signs a message
    */
-  async signMessage(message: string): Promise<string> {
+  async signMessage(_message: string): Promise<string> {
     // Simulate signing a message
     console.log('Simulating message signing');
     

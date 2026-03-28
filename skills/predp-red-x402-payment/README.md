@@ -1,26 +1,26 @@
-# PPA Market AI Skill
+# PredP.red x402 Payment AI Skill
 
 ## 概述
 
-PPA Market AI Skill 是一个基于 OpenClaw 框架的 AI 技能，使用户能够通过自然语言交互直接调用 predp.red 平台的智能合约，支付 $PCT 代币购买或出售 yes/no token。
+PredP.red x402 Payment AI Skill 是一个基于 OpenClaw 框架的 AI 技能，使用户能够通过自然语言交互在 X Layer 上使用 USDT 进行 x402 支付，购买 predp.red 平台的服务和 $PCT 代币。
 
 ## 主要特点
 
-- **支付 $PCT 购买 yes/no token**：支持通过 `buy` 接口购买预测市场的份额
-- **出售 yes/no token 获得 $PCT**：支持通过 `sell` 接口出售持有的份额
-- **智能价格计算**：价格由智能合约的 `_calcPrice` 函数自动计算
-- **平台费用管理**：交易过程中自动扣除平台费用
-- **多语言支持**：支持中英文双语交互
-- **已硬编码参数**：
-  - Market Digest: `0x1438dc0705c42ad47d91aa7dae2dddcd3017456c3a27b93b316c676934b28d65`
-  - PPA Contract Address: `0xbE03338A630B948A043b5e8eA390813bF28A5Ff4`
-  - PCT Token Address: `0x4ACc6ce38a319a6D0689a5eC84B6d0a39B64c475`
+- **支持 x402 支付处理**：使用 x402 协议进行安全的支付
+- **提供服务查询功能**：支持查询可用的服务套餐
+- **支持余额检查**：可以检查 USDT 和 $PCT 余额
+- **支付交易验证**：验证支付交易的状态
+- **中英文双语支持**：提供中英文两种语言版本
+- **服务套餐**：
+  - Try 服务：自定义金额购买，1:1 比例获得 $PCT
+  - Love 服务：99 USDT 购买 200 $PCT（约 2.02 倍）
+  - Host 服务：999 USDT 购买 999 $PCT（1:1 比例）
 
 ## 安装和配置
 
 ```bash
 # 进入技能目录
-cd /Users/stark/Desktop/PP/xlayer-hackathon/skills/ppa-market-skill
+cd /Users/stark/Desktop/PP/xlayer-hackathon/skills/predp-red-x402-payment
 
 # 安装依赖
 npm install
@@ -51,6 +51,9 @@ X_LAYER_CHAIN_ID=196
 # predp.red Smart Contract
 PREDP_CONTRACT_ADDRESS=0xbE03338A630B948A043b5e8eA390813bF28A5Ff4  # PPA Contract
 PCT_TOKEN_ADDRESS=0x4ACc6ce38a319a6D0689a5eC84B6d0a39B64c475      # PCT Token
+
+# Service Configuration
+PREDP_SERVICE_URL=https://xlayer.predp.red
 ```
 
 ## 使用方法
@@ -58,23 +61,24 @@ PCT_TOKEN_ADDRESS=0x4ACc6ce38a319a6D0689a5eC84B6d0a39B64c475      # PCT Token
 ### 基础使用
 
 ```typescript
-import { PPAMarketSkill } from './src/skills/ppa-skill';
+import { X402Skill } from './src/skills/x402-skill';
 import { loadConfig } from './src/utils/config';
 
 const config = loadConfig();
 
-const skill = new PPAMarketSkill({
+const skill = new X402Skill({
   apiKey: config.okx.apiKey,
   secretKey: config.okx.secretKey,
   passphrase: config.okx.passphrase,
-  contractAddress: config.predp.contractAddress,
-  pctTokenAddress: config.predp.pctTokenAddress,
   rpcUrl: config.xlayer.rpcUrl,
+  chainId: config.xlayer.chainId,
   language: 'zh', // or 'en'
+  serviceUrl: config.predp.serviceUrl,
+  pctTokenAddress: config.predp.pctTokenAddress,
 });
 
 // 处理用户指令
-const response = await skill.handleMessage('在市场 #123 买入 100 USDT 的是');
+const response = await skill.handleMessage('购买 100 USDT 的 PCT');
 console.log(response);
 ```
 
@@ -82,26 +86,20 @@ console.log(response);
 
 **Chinese / 中文**:
 ```
-用户：查看市场信息
-用户：显示市场 #123 的详细信息
-用户：我有哪些持仓？
-用户：在市场 #123 支付 100 PCT 的是
-用户：卖出我在市场 #123 的所有份额
-用户：平仓，卖出 50% 的持仓
-用户：批准 PCT
-用户：approve PCT 1000
+用户：购买 100 USDT 的 PCT
+用户：查看服务套餐
+用户：买 Love 套餐
+用户：购买 Host 服务
+用户：检查我的余额
 ```
 
 **English**:
 ```
-User: View market information
-User: Show market #123 details
-User: What are my positions?
-User: Pay 100 PCT of Yes in market #123
-User: Sell all my positions in market #123
-User: Close position, sell 50% of holdings
-User: Approve PCT
-User: approve PCT 1000
+User: Buy 100 USDT of PCT
+User: View service plans
+User: Buy Love package
+User: Purchase Host service
+User: Check my balance
 ```
 
 ## 技术架构
@@ -119,15 +117,15 @@ User: approve PCT 1000
            │
            ↓
 ┌──────────────────────┐
-│  PPAMarketSkill      │ ← 核心交易逻辑
+│  X402Skill           │ ← 核心交易逻辑
 └──────────┬───────────┘
            │
            ├──────────────┐
            │              │
            ↓              ↓
 ┌──────────────────────┐ ┌──────────────────────┐
-│  Agentic Wallet      │ │ Smart Contract       │
-│  OKX API 集成        │ │ predp.red 合约调用   │
+│  Agentic Wallet      │ │ x402 Payment Protocol│
+│  OKX API 集成        │ │ 链上支付协议        │
 └──────────┬───────────┘ └──────────┬───────────┘
            │                        │
            └──────────┬─────────────┘
@@ -165,7 +163,7 @@ User: approve PCT 1000
 npm test
 
 # 运行特定测试
-npm test -- ppa-skill.test.ts
+npm test -- x402-skill.test.ts
 ```
 
 ## 资源

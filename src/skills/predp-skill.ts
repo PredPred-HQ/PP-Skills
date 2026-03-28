@@ -7,13 +7,16 @@ import { ethers } from 'ethers';
 import { OnchainOS } from '@okx/onchainos-sdk';
 import PREDP_ABI from '../contracts/predp-abi.json' assert { type: 'json' };
 import { I18nService, Language } from '../i18n';
+import { AgenticWallet } from '../utils/agentic-wallet';
 
 export interface PredPSkillOptions {
   apiKey: string;
   secretKey: string;
   passphrase: string;
   contractAddress: string;
+  pctTokenAddress: string;
   rpcUrl?: string;
+  chainId?: number;
   language?: Language;
 }
 
@@ -49,6 +52,7 @@ export class PredPSkill {
   private provider: ethers.Provider;
   private contract: ethers.Contract;
   private onchainOS: OnchainOS;
+  private agenticWallet: AgenticWallet;
   private options: PredPSkillOptions;
   private i18n: I18nService;
 
@@ -63,6 +67,14 @@ export class PredPSkill {
       apiKey: options.apiKey,
       secretKey: options.secretKey,
       passphrase: options.passphrase,
+    });
+
+    this.agenticWallet = new AgenticWallet({
+      apiKey: options.apiKey,
+      secretKey: options.secretKey,
+      passphrase: options.passphrase,
+      rpcUrl: options.rpcUrl,
+      chainId: options.chainId,
     });
   }
 
@@ -316,6 +328,10 @@ Example: "Buy 100 USDT of Yes in market #123"`;
 
       const expectedReturn = intent.amount * (intent.outcome === 'YES' ? marketInfo.yesOdds : marketInfo.noOdds);
       
+      // Generate digest and nftId (simplified for demo)
+      const digest = ethers.keccak256(ethers.toUtf8Bytes(`market_${intent.marketId}_${Date.now()}`));
+      const nftId = ethers.toBigInt(intent.outcome === 'YES' ? `1000${intent.marketId}` : `2000${intent.marketId}`);
+
       if (isZh) {
         return `${t.t('tradeConfirmation')}
 
@@ -327,7 +343,9 @@ ${t.t('expectedReturn')}: ${expectedReturn.toFixed(2)} ${t.t('usdt')} (${isZh ? 
 
 ⚠️ **${t.t('riskWarning')}**: ${isZh ? '预测市场存在本金损失风险，如果预测错误可能损失全部投资' : 'Prediction markets carry risk of loss, you may lose your entire investment if prediction is wrong'}
 
-${isZh ? '请确认是否继续？(回复"确认"或"取消")' : 'Please confirm to continue? (Reply "Confirm" or "Cancel")'}`;
+${isZh ? '请确认是否继续？(回复"确认"或"取消")' : 'Please confirm to continue? (Reply "Confirm" or "Cancel")'}
+
+(Digest: ${digest.substring(0, 10)}... | NFT ID: ${nftId})`;
       } else {
         return `${t.t('tradeConfirmation')}
 
@@ -339,7 +357,9 @@ ${t.t('expectedReturn')}: ${expectedReturn.toFixed(2)} ${t.t('usdt')} (${isZh ? 
 
 ⚠️ **${t.t('riskWarning')}**: Prediction markets carry risk of loss, you may lose your entire investment if prediction is wrong
 
-Please confirm to continue? (Reply "Confirm" or "Cancel")`;
+Please confirm to continue? (Reply "Confirm" or "Cancel")
+
+(Digest: ${digest.substring(0, 10)}... | NFT ID: ${nftId})`;
       }
     } catch (error) {
       return `${t.t('error')}: ${error instanceof Error ? error.message : 'Unknown error'}`;
@@ -362,6 +382,10 @@ Example: "Sell all positions in market #123"`;
       }
     }
 
+    // Generate digest and nftId (simplified for demo)
+    const digest = ethers.keccak256(ethers.toUtf8Bytes(`market_${intent.marketId}_${Date.now()}`));
+    const nftId = ethers.toBigInt(`1000${intent.marketId}`);
+
     if (isZh) {
       return `💰 **卖出确认**
 
@@ -370,7 +394,9 @@ ${isZh ? '卖出比例' : 'Sell percentage'}: ${intent.percentage || 100}%
 
 ⚠️ ${isZh ? '请确认是否继续？(回复"确认"或"取消")' : 'Please confirm to continue? (Reply "Confirm" or "Cancel")'}
 
-(${isZh ? '注：实际卖出数量和收益将根据当前市场价格计算' : 'Note: Actual sell amount and proceeds will be calculated based on current market price'})`;
+(${isZh ? '注：实际卖出数量和收益将根据当前市场价格计算' : 'Note: Actual sell amount and proceeds will be calculated based on current market price'})
+
+(Digest: ${digest.substring(0, 10)}... | NFT ID: ${nftId})`;
     } else {
       return `💰 **Sell Confirmation**
 
@@ -379,7 +405,9 @@ Sell percentage: ${intent.percentage || 100}%
 
 ⚠️ Please confirm to continue? (Reply "Confirm" or "Cancel")
 
-(Note: Actual sell amount and proceeds will be calculated based on current market price)`;
+(Note: Actual sell amount and proceeds will be calculated based on current market price)
+
+(Digest: ${digest.substring(0, 10)}... | NFT ID: ${nftId})`;
     }
   }
 
@@ -462,30 +490,41 @@ ${t.t('helpDescription')}:
     }
   }
 
-  async buy(marketId: string, amount: number, outcome: 'YES' | 'NO'): Promise<string> {
+  async buy(digest: string, nftId: string): Promise<string> {
     try {
-      const amountWei = ethers.parseUnits(amount.toString(), 18);
-      
-      const tx = await this.contract.buy(marketId, amountWei, outcome === 'YES');
-      const receipt = await tx.wait();
+      const result = await this.agenticWallet.executeBuy(
+        this.options.contractAddress,
+        digest,
+        nftId,
+        this.options.pctTokenAddress
+      );
       
       const t = this.i18n;
-      return `${t.t('success')} - ${t.t('transactionSuccess')}: ${receipt.hash}`;
+      if (result.status === 'success') {
+        return `${t.t('success')} - ${t.t('transactionSuccess')}: ${result.txHash}`;
+      } else {
+        throw new Error(result.error || t.t('transactionFailed'));
+      }
     } catch (error) {
       const t = this.i18n;
       throw new Error(`${t.t('error')} - ${t.t('buy')}: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 
-  async sell(marketId: string, amount: number): Promise<string> {
+  async sell(digest: string, nftId: string): Promise<string> {
     try {
-      const amountWei = ethers.parseUnits(amount.toString(), 18);
-      
-      const tx = await this.contract.sell(marketId, amountWei);
-      const receipt = await tx.wait();
+      const result = await this.agenticWallet.executeSell(
+        this.options.contractAddress,
+        digest,
+        nftId
+      );
       
       const t = this.i18n;
-      return `${t.t('success')} - ${t.t('transactionSuccess')}: ${receipt.hash}`;
+      if (result.status === 'success') {
+        return `${t.t('success')} - ${t.t('transactionSuccess')}: ${result.txHash}`;
+      } else {
+        throw new Error(result.error || t.t('transactionFailed'));
+      }
     } catch (error) {
       const t = this.i18n;
       throw new Error(`${t.t('error')} - ${t.t('sell')}: ${error instanceof Error ? error.message : 'Unknown error'}`);

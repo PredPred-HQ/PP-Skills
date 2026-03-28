@@ -23,6 +23,7 @@ async function main() {
     secretKey: config.okx.secretKey,
     passphrase: config.okx.passphrase,
     contractAddress: config.predp.contractAddress,
+    pctTokenAddress: config.predp.pctTokenAddress,
     rpcUrl: config.xlayer.rpcUrl,
     language: language,
   });

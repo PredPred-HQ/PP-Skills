@@ -1,101 +1,459 @@
 [
   {
+    "inputs": [],
+    "name": "CallerIsNotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "CallerIsNotOwner",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "DelegateNotAllowed",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "EnforcedPause",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ExpectedPause",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "InvalidInitialization",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "NotInitializing",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "OnlyDelegate",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "ReentrancyGuardReentrantCall",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "signer",
+        "type": "address"
+      }
+    ],
+    "name": "VerifySignatureFailed",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "eip712Name",
+        "type": "string"
+      },
+      {
+        "indexed": false,
+        "internalType": "string",
+        "name": "eip712Version",
+        "type": "string"
+      }
+    ],
+    "name": "EIP712ConfigChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [],
+    "name": "EIP712DomainChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "uint64",
+        "name": "version",
+        "type": "uint64"
+      }
+    ],
+    "name": "Initialized",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "Paused",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      }
+    ],
+    "name": "Unpaused",
+    "type": "event"
+  },
+  {
     "inputs": [
       {
         "internalType": "string",
-        "name": "marketId",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "version",
+        "type": "string"
+      }
+    ],
+    "name": "EIP712Facet_init",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "eip712Domain",
+    "outputs": [
+      {
+        "internalType": "bytes1",
+        "name": "fields",
+        "type": "bytes1"
+      },
+      {
+        "internalType": "string",
+        "name": "name",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "version",
         "type": "string"
       },
       {
         "internalType": "uint256",
-        "name": "amount",
+        "name": "chainId",
         "type": "uint256"
       },
       {
-        "internalType": "bool",
-        "name": "outcome",
-        "type": "bool"
-      }
-    ],
-    "name": "buy",
-    "outputs": [
+        "internalType": "address",
+        "name": "verifyingContract",
+        "type": "address"
+      },
       {
-        "internalType": "uint256",
-        "name": "shares",
-        "type": "uint256"
+        "internalType": "bytes32",
+        "name": "salt",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "extensions",
+        "type": "uint256[]"
       }
     ],
-    "stateMutability": "payable",
+    "stateMutability": "view",
     "type": "function"
   },
   {
     "inputs": [
       {
         "internalType": "string",
-        "name": "marketId",
+        "name": "name",
         "type": "string"
       },
       {
-        "internalType": "uint256",
-        "name": "amount",
-        "type": "uint256"
+        "internalType": "string",
+        "name": "version",
+        "type": "string"
       }
     ],
-    "name": "sell",
-    "outputs": [
-      {
-        "internalType": "uint256",
-        "name": "payout",
-        "type": "uint256"
-      }
-    ],
+    "name": "setEIP712Config",
+    "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
   },
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nonce",
+        "type": "uint256"
+      }
+    ],
+    "name": "NonceHasBeenUsed",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "nonce",
+        "type": "uint256"
+      }
+    ],
+    "name": "NonceUsed",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "userAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nonce",
+        "type": "uint256"
+      }
+    ],
+    "name": "isNonceUsed",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "SBTFacetRejectAction",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "account",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "approved",
+        "type": "bool"
+      }
+    ],
+    "name": "ApprovalForAll",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "ids",
+        "type": "uint256[]"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256[]",
+        "name": "values",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "TransferBatch",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "operator",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "from",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "value",
+        "type": "uint256"
+      }
+    ],
+    "name": "TransferSingle",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
         "internalType": "string",
-        "name": "marketId",
+        "name": "value",
+        "type": "string"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint256",
+        "name": "id",
+        "type": "uint256"
+      }
+    ],
+    "name": "URI",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "baseURI_",
         "type": "string"
       }
     ],
-    "name": "getMarketInfo",
+    "name": "SBTERC1155Facet_init",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "account_",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "balanceOf",
     "outputs": [
       {
-        "internalType": "string",
-        "name": "title",
-        "type": "string"
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address[]",
+        "name": "accounts_",
+        "type": "address[]"
       },
       {
-        "internalType": "string",
-        "name": "description",
-        "type": "string"
-      },
+        "internalType": "uint256[]",
+        "name": "ids_",
+        "type": "uint256[]"
+      }
+    ],
+    "name": "balanceOfBatch",
+    "outputs": [
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "idx",
+    "outputs": [
       {
         "internalType": "uint256",
-        "name": "endTime",
+        "name": "",
         "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "totalLiquidity",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "yesOdds",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint256",
-        "name": "noOdds",
-        "type": "uint256"
-      },
-      {
-        "internalType": "uint8",
-        "name": "status",
-        "type": "uint8"
       }
     ],
     "stateMutability": "view",
@@ -105,38 +463,21 @@
     "inputs": [
       {
         "internalType": "address",
-        "name": "user",
+        "name": "account_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "operator_",
         "type": "address"
       }
     ],
-    "name": "getUserPositions",
+    "name": "isApprovedForAll",
     "outputs": [
       {
-        "components": [
-          {
-            "internalType": "string",
-            "name": "marketId",
-            "type": "string"
-          },
-          {
-            "internalType": "bool",
-            "name": "outcome",
-            "type": "bool"
-          },
-          {
-            "internalType": "uint256",
-            "name": "amount",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "shares",
-            "type": "uint256"
-          }
-        ],
-        "internalType": "struct Position[]",
-        "name": "positions",
-        "type": "tuple[]"
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
       }
     ],
     "stateMutability": "view",
@@ -145,15 +486,220 @@
   {
     "inputs": [
       {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "uint256[]",
+        "name": "",
+        "type": "uint256[]"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "safeBatchTransferFrom",
+    "outputs": [],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      },
+      {
+        "internalType": "bytes",
+        "name": "",
+        "type": "bytes"
+      }
+    ],
+    "name": "safeTransferFrom",
+    "outputs": [],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      },
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "name": "setApprovalForAll",
+    "outputs": [],
+    "stateMutability": "pure",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "id_",
+        "type": "uint256"
+      }
+    ],
+    "name": "totalSupply",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "tokenID_",
+        "type": "uint256"
+      }
+    ],
+    "name": "uri",
+    "outputs": [
+      {
         "internalType": "string",
-        "name": "marketId",
+        "name": "",
         "type": "string"
       }
     ],
-    "name": "resolveMarket",
-    "outputs": [],
-    "stateMutability": "nonpayable",
+    "stateMutability": "view",
     "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "AccessControl_CallerIsNotAuthorized",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "AccessControl_CannotRemoveAdmin",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "context",
+        "type": "string"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "newQuote",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "maxQuote",
+        "type": "uint256"
+      }
+    ],
+    "name": "ExceedsMaxTokenTransferOutQuote",
+    "type": "error"
+  },
+  {
+    "inputs": [],
+    "name": "PayoutTemporarilyDisabled",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes4",
+        "name": "functionSig",
+        "type": "bytes4"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint8",
+        "name": "role",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "enabled",
+        "type": "bool"
+      }
+    ],
+    "name": "FunctionAccessChanged",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "newMaxTTOQ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "MaxTTOQUpdated",
+    "type": "event"
   },
   {
     "anonymous": false,
@@ -161,20 +707,14 @@
       {
         "indexed": true,
         "internalType": "string",
-        "name": "marketId",
+        "name": "context",
         "type": "string"
       },
       {
         "indexed": true,
         "internalType": "address",
-        "name": "buyer",
+        "name": "tokenAddress",
         "type": "address"
-      },
-      {
-        "indexed": false,
-        "internalType": "bool",
-        "name": "outcome",
-        "type": "bool"
       },
       {
         "indexed": false,
@@ -185,7 +725,353 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "shares",
+        "name": "newTTOQ",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      }
+    ],
+    "name": "TTOQUpdated",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "pctAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pctDecimals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "pftAddress",
+            "type": "address"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IAppStorage.PlatformMeta",
+        "name": "pm",
+        "type": "tuple"
+      }
+    ],
+    "name": "UpdatePlatformMeta",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "uint8",
+        "name": "role",
+        "type": "uint8"
+      },
+      {
+        "indexed": false,
+        "internalType": "bool",
+        "name": "enabled",
+        "type": "bool"
+      }
+    ],
+    "name": "UserRoleUpdated",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "roleA",
+        "type": "uint8"
+      }
+    ],
+    "name": "PPApp_AdminFacet_init",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "getPlatformMeta",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "pctAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pctDecimals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "pftAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IAppStorage.PlatformMeta",
+        "name": "pm",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "address",
+            "name": "pctAddress",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pctDecimals",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "pftAddress",
+            "type": "address"
+          }
+        ],
+        "internalType": "struct IAppStorage.PlatformMeta",
+        "name": "pm",
+        "type": "tuple"
+      }
+    ],
+    "name": "updatePlatformMeta",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "withdrawPFT",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nftId",
+        "type": "uint256"
+      }
+    ],
+    "name": "InvalidNftId",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "MarketAlreadyExists",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "MarketAlreadyFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "MarketEnded",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "MarketNotEnabled",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "MarketNotExists",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "MarketShouldEnded",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "MarketShouldFinalized",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "currentNftId",
+        "type": "uint256"
+      }
+    ],
+    "name": "MaxMarketReached",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "payer",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "receiver",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "tokenAddress",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "PaymentTransferFailed",
+    "type": "error"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nftId",
+        "type": "uint256"
+      },
+      {
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      }
+    ],
+    "name": "UserBalanceZero",
+    "type": "error"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "buyer",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nftId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "targetSupply",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "price",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "platformFee",
         "type": "uint256"
       }
     ],
@@ -197,10 +1083,420 @@
     "inputs": [
       {
         "indexed": true,
-        "internalType": "string",
-        "name": "marketId",
-        "type": "string"
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
       },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "failedNftId",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nftBalance",
+        "type": "uint256"
+      }
+    ],
+    "name": "ClaimFailedToken",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "user",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "nftBalance",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "rewardAmount",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "pcTokenAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "ClaimReward",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "resultNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnded",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalized",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "k",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "c",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeBps",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pcPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ptTokenPayout",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IAppStorage.Market",
+        "name": "marketData",
+        "type": "tuple"
+      }
+    ],
+    "name": "CreateMarket",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "resultNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnded",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalized",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "k",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "c",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeBps",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pcPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ptTokenPayout",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IAppStorage.Market",
+        "name": "marketData",
+        "type": "tuple"
+      }
+    ],
+    "name": "EndMarket",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "resultNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnded",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalized",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "k",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "c",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeBps",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pcPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ptTokenPayout",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IAppStorage.Market",
+        "name": "marketData",
+        "type": "tuple"
+      }
+    ],
+    "name": "FinalizeMarket",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
       {
         "indexed": true,
         "internalType": "address",
@@ -208,19 +1504,840 @@
         "type": "address"
       },
       {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
         "indexed": false,
         "internalType": "uint256",
-        "name": "amount",
+        "name": "nftId",
         "type": "uint256"
       },
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "payout",
+        "name": "targetSupply",
+        "type": "uint256"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "price",
         "type": "uint256"
       }
     ],
     "name": "Sell",
     "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "resultNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnded",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalized",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "k",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "c",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeBps",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pcPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ptTokenPayout",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IAppStorage.Market",
+        "name": "marketData",
+        "type": "tuple"
+      }
+    ],
+    "name": "ToggleMarket",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "resultNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnded",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalized",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "k",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "c",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeBps",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pcPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ptTokenPayout",
+            "type": "uint256"
+          }
+        ],
+        "indexed": false,
+        "internalType": "struct IAppStorage.Market",
+        "name": "marketData",
+        "type": "tuple"
+      }
+    ],
+    "name": "UpdateMarket",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "platformFeeAmount",
+        "type": "uint256"
+      }
+    ],
+    "name": "WithdrawPlatformFee",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint8",
+        "name": "roleA",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "roleB",
+        "type": "uint8"
+      },
+      {
+        "internalType": "uint8",
+        "name": "roleC",
+        "type": "uint8"
+      }
+    ],
+    "name": "PPApp_MarketFacet_init",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "adminEnableMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "adminFinalizeMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "address",
+        "name": "to",
+        "type": "address"
+      }
+    ],
+    "name": "adminWithdrawPlatformFee",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nftId",
+        "type": "uint256"
+      }
+    ],
+    "name": "buy",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "claimFailedToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "claimReward",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "resultNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnded",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalized",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "k",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "c",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeBps",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pcPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ptTokenPayout",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IAppStorage.Market",
+        "name": "marketData",
+        "type": "tuple"
+      }
+    ],
+    "name": "createMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      }
+    ],
+    "name": "disableMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "resultNftId",
+        "type": "uint256"
+      }
+    ],
+    "name": "endMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "targetSupply",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMarket",
+    "outputs": [
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "resultNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnded",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalized",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "k",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "c",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeBps",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pcPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ptTokenPayout",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IAppStorage.Market",
+        "name": "market",
+        "type": "tuple"
+      },
+      {
+        "components": [
+          {
+            "internalType": "uint256",
+            "name": "targetSupplyPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "currentYesPrice",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "currentNoPrice",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IAppStorage.PriceMeta",
+        "name": "priceMeta",
+        "type": "tuple"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "uint256",
+        "name": "start",
+        "type": "uint256"
+      },
+      {
+        "internalType": "uint256",
+        "name": "limit",
+        "type": "uint256"
+      }
+    ],
+    "name": "getMarketList",
+    "outputs": [
+      {
+        "internalType": "bytes32[]",
+        "name": "",
+        "type": "bytes32[]"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint256",
+        "name": "nftId",
+        "type": "uint256"
+      }
+    ],
+    "name": "sell",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "digest",
+        "type": "bytes32"
+      },
+      {
+        "components": [
+          {
+            "internalType": "bytes32",
+            "name": "digest",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "resultNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "rewardERC20Token",
+            "type": "address"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noNftId",
+            "type": "uint256"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnabled",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isEnded",
+            "type": "bool"
+          },
+          {
+            "internalType": "bool",
+            "name": "isFinalized",
+            "type": "bool"
+          },
+          {
+            "internalType": "uint256",
+            "name": "yesSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "noSupply",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "k",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "c",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "poolTotalAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeBps",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "platformFeeAmount",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "rewardTotalPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "pcPayout",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ptTokenPayout",
+            "type": "uint256"
+          }
+        ],
+        "internalType": "struct IAppStorage.Market",
+        "name": "marketData",
+        "type": "tuple"
+      }
+    ],
+    "name": "updateMarket",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
   }
 ]

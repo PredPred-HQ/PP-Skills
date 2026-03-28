@@ -17,7 +17,7 @@ A PredP.red payment skill that supports x402 payment with USDT on X Layer. This 
 
 1. Navigate to the skill directory:
    ```bash
-   cd /Users/stark/Desktop/PP/xlayer-hackathon2/.trae/skills/predp-red-x402-payment
+   cd ./skills/predp-red-x402-payment
    ```
 
 2. Install dependencies:

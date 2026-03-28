@@ -169,7 +169,8 @@ node dist/index.js "验证支付 0xabc123..."
 
 ```bash
 # 克隆项目
-git clone <repository-url>
+git clone https://github.com/PredPred-HQ/PP-Skills.git
+cd PP-Skills
 
 # 安装依赖
 npm install

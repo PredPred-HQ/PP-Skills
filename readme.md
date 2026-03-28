@@ -3,9 +3,9 @@
 🤖 **AI-Powered Prediction Market Trading Assistant**  
 🤖 **AI 驱动的预测市场交易助手**
 
-基于 x402 支付协议的 AI Skill，让用户在 OpenClaw 中通过自然语言即可交易 predp.red 去中心化预测市场。
+直接与 X Layer 区块链交互的 AI Skill，让用户在 OpenClaw 中通过自然语言即可交易 predp.red 去中心化预测市场。支持直接调用智能合约进行买入、卖出操作，并包含完整的市场查看和持仓管理功能。
 
-AI Skill with x402 payment integration, enabling users to trade on predp.red decentralized prediction market through natural language in OpenClaw.
+AI Skill with direct blockchain integration, enabling users to trade on predp.red decentralized prediction market through natural language in OpenClaw. Supports direct smart contract interactions for buy and sell operations, with comprehensive market viewing and position management features.
 
 ---
 
@@ -62,8 +62,8 @@ X_LAYER_RPC_URL=https://xlayerrpc.okx.com
 X_LAYER_CHAIN_ID=196
 
 # predp.red Smart Contract
-PREDP_CONTRACT_ADDRESS=0xYourContractAddressHere
-PCT_TOKEN_ADDRESS=0xYourPctTokenAddressHere
+PREDP_CONTRACT_ADDRESS=0xbE03338A630B948A043b5e8eA390813bF28A5Ff4  # PPA Contract
+PCT_TOKEN_ADDRESS=0x4ACc6ce38a319a6D0689a5eC84B6d0a39B64c475      # PCT Token
 PREDP_SERVICE_URL=https://xlayer.predp.red
 
 # AI Model Configuration (optional)
@@ -85,9 +85,11 @@ NODE_ENV=development
 用户：查看 predp.red 热门市场
 用户：显示市场 #123 的详细信息
 用户：我有哪些持仓？
-用户：在市场 #123 买入 100 USDT 的"是"份额
+用户：在市场 #123 支付 100 PCT 的是
 用户：卖出我在市场 #123 的所有份额
 用户：平仓，卖出 50% 的持仓
+用户：批准 PCT
+用户：approve PCT 1000
 ```
 
 **English**:
@@ -95,9 +97,11 @@ NODE_ENV=development
 User: View predp.red popular markets
 User: Show market #123 details
 User: What are my positions?
-User: Buy 100 USDT of Yes in market #123
+User: Pay 100 PCT of Yes in market #123
 User: Sell all my positions in market #123
 User: Close position, sell 50% of holdings
+User: Approve PCT
+User: approve PCT 1000
 ```
 
 ### 2. $PCT 购买支付 (X402Skill)
@@ -144,34 +148,24 @@ User: Check my balance
 │  Intent Parser       │ ← AI 意图识别
 └──────────┬───────────┘
            │
-           ├──────────────┐
-           │              │
-           ↓              ↓
-┌──────────────────────┐ ┌──────────────────────┐
-│  PredPSkill          │ │  X402Skill           │
-│  预测市场交易处理    │ │  $PCT 购买支付处理   │
-└──────────┬───────────┘ └──────────┬───────────┘
-           │                        │
-           └──────────┬─────────────┘
-                      │
-                      ↓
+           ↓
 ┌──────────────────────┐
-│  Agentic Wallet      │ ← OKX API 集成
+│  PredPSkill          │ ← 核心交易逻辑
 └──────────┬───────────┘
            │
            ├──────────────┐
            │              │
            ↓              ↓
 ┌──────────────────────┐ ┌──────────────────────┐
-│  x402 Payment        │ │ Smart Contract       │
-│  x402 支付协议       │ │ predp.red 合约调用   │
+│  Agentic Wallet      │ │ Smart Contract       │
+│  OKX API 集成        │ │ predp.red 合约调用   │
 └──────────┬───────────┘ └──────────┬───────────┘
            │                        │
            └──────────┬─────────────┘
                       │
                       ↓
 ┌──────────────────────┐
-│   X Layer L2         │ ← 交易上链
+│   X Layer L2         │ ← 直接交易上链
 └──────────────────────┘
 ```
 

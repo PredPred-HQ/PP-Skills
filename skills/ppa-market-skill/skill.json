@@ -1,0 +1,96 @@
+{
+  "name": "ppa-market-skill",
+  "version": "1.0.0",
+  "description": "AI Skill for buying and selling yes/no tokens with $PCT payment on predp.red platform",
+  "author": "X Layer Hackathon Team",
+  "license": "MIT",
+  "keywords": [
+    "xlayer",
+    "prediction-market",
+    "ai-skill",
+    "openclaw",
+    "predp.red",
+    "pct-token"
+  ],
+  "categories": [
+    "defi",
+    "trading",
+    "prediction-market"
+  ],
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "src",
+    "SKILL.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "ethers": "^6.11.0",
+    "dotenv": "^16.4.1",
+    "axios": "^1.6.7",
+    "zod": "^3.22.4"
+  },
+  "peerDependencies": {
+    "typescript": ">=5.0.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "skill": {
+    "name": "PPA Market Skill",
+    "description": "Buy and sell yes/no tokens with $PCT payment on predp.red platform",
+    "version": "1.0.0",
+    "commands": [
+      {
+        "pattern": "购买.*token|买入.*token|支付.*购买.*token",
+        "description": "Buy yes/no tokens",
+        "handler": "handleBuy"
+      },
+      {
+        "pattern": "出售.*token|卖出.*token|平仓.*token",
+        "description": "Sell yes/no tokens",
+        "handler": "handleSell"
+      },
+      {
+        "pattern": "查看.*市场|显示.*市场|市场.*信息",
+        "description": "View market information",
+        "handler": "handleViewMarket"
+      },
+      {
+        "pattern": "我的.*持仓|持仓.*信息|显示.*持仓",
+        "description": "View user positions",
+        "handler": "handleViewPositions"
+      },
+      {
+        "pattern": "批准.*PCT|approve.*PCT",
+        "description": "Approve PCT token",
+        "handler": "handleApprove"
+      }
+    ],
+    "configuration": {
+      "properties": {
+        "okxApiKey": {
+          "type": "string",
+          "description": "OKX API Key"
+        },
+        "okxSecretKey": {
+          "type": "string",
+          "description": "OKX Secret Key"
+        },
+        "okxPassphrase": {
+          "type": "string",
+          "description": "OKX Passphrase"
+        }
+      },
+      "required": [
+        "okxApiKey",
+        "okxSecretKey",
+        "okxPassphrase"
+      ]
+    }
+  }
+}

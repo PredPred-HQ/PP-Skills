@@ -33,6 +33,7 @@ export interface PurchaseIntent {
   amount?: number;
   txHash?: string;
 }
+
 export class X402Skill {
   private i18n: I18nService;
   private x402Payment: X402Payment;
@@ -157,7 +158,7 @@ export class X402Skill {
   }
 
   private extractAmount(message: string): number | undefined {
-    const match = message.match(/(\d+(?:\.\d+)?)\s*(?:usdt|u|刀|块|元|dollars?)?/i);
+    const match = message.match(/(\d+(\.\d+)?)\s*(?:usdt|u|刀|块|元|dollars?)?/i);
     return match ? parseFloat(match[1]) : undefined;
   }
 
@@ -414,7 +415,7 @@ Examples:
 - 📊 汇率：${paymentDetails.pctAmount / paymentDetails.usdtAmount} PCT/USDT
 
 🔐 **支付授权信息**：
-- � 签名：${authorization.signature.slice(0, 12)}...
+- 🔐 签名：${authorization.signature.slice(0, 12)}...
 - 🎯 收款人地址：${this.options.recipientAddress || '0x779ded0c9e1022225f8e0630b35a9b54be713736'}
 - 🌐 网络：X Layer Mainnet
 
@@ -430,7 +431,7 @@ Examples:
 - 支付成功后无法取消
 - 如果您有任何问题，请联系客服
 
-� 回复 "确认" 或 "Confirm" 继续支付，回复 "取消" 或 "Cancel" 取消购买。`;
+🔄 回复 "确认" 或 "Confirm" 继续支付，回复 "取消" 或 "Cancel" 取消购买。`;
     } else {
       return `✅ **$PCT Purchase Confirmation**
 
@@ -441,7 +442,7 @@ Examples:
 - 📊 Exchange Rate：${paymentDetails.pctAmount / paymentDetails.usdtAmount} PCT/USDT
 
 🔐 **Payment Authorization**：
-- � Signature：${authorization.signature.slice(0, 12)}...
+- 🔐 Signature：${authorization.signature.slice(0, 12)}...
 - 🎯 Recipient Address：${this.options.recipientAddress || '0x779ded0c9e1022225f8e0630b35a9b54be713736'}
 - 🌐 Network：X Layer Mainnet
 
@@ -457,7 +458,7 @@ Examples:
 - Payments cannot be canceled after confirmation
 - If you have any questions, please contact support
 
-� Reply "Confirm" to continue, reply "Cancel" to cancel purchase.`;
+🔄 Reply "Confirm" to continue, reply "Cancel" to cancel purchase.`;
     }
   }
 

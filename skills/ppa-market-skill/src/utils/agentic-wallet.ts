@@ -143,29 +143,90 @@ export class AgenticWallet {
   }
 
   /**
-   * Track transaction order
+   * Approve PCT token for PPA contract
    */
-  async trackOrder(): Promise<{
-    txHash: string;
-    status: 'pending' | 'success' | 'failed';
-    blockNumber?: number;
-    gasUsed?: string;
-    error?: string;
-  }> {
+  async approvePCT(
+    contractAddress: string,
+    spenderAddress: string,
+    amount: string
+  ): Promise<TransactionResult> {
     try {
-      // Simulate order tracking
-      return {
-        txHash: '0x' + Math.random().toString(16).substring(2, 66),
-        status: 'success',
-        blockNumber: 123456,
-        gasUsed: '21000000',
-      };
+      // Create approve transaction data for ERC20 token
+      const iface = new ethers.Interface([
+        {
+          "inputs": [
+            { "internalType": "address", "name": "spender", "type": "address" },
+            { "internalType": "uint256", "name": "value", "type": "uint256" }
+          ],
+          "name": "approve",
+          "outputs": [
+            { "internalType": "bool", "name": "", "type": "bool" }
+          ],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ]);
+
+      const data = iface.encodeFunctionData('approve', [
+        spenderAddress,
+        ethers.parseEther(amount)
+      ]);
+
+      // Broadcast transaction
+      return await this.broadcastTransaction({
+        to: contractAddress,
+        data,
+        value: '0',
+      });
     } catch (error) {
       return {
         txHash: '',
         status: 'failed',
         error: error instanceof Error ? error.message : 'Unknown error',
       };
+    }
+  }
+
+  /**
+   * Check PCT token allowance
+   */
+  async checkPCTAllowance(
+    contractAddress: string,
+    ownerAddress: string,
+    spenderAddress: string
+  ): Promise<bigint> {
+    try {
+      // Create allowance call data for ERC20 token
+      const iface = new ethers.Interface([
+        {
+          "inputs": [
+            { "internalType": "address", "name": "owner", "type": "address" },
+            { "internalType": "address", "name": "spender", "type": "address" }
+          ],
+          "name": "allowance",
+          "outputs": [
+            { "internalType": "uint256", "name": "", "type": "uint256" }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        }
+      ]);
+
+      const data = iface.encodeFunctionData('allowance', [
+        ownerAddress,
+        spenderAddress
+      ]);
+
+      // Call contract to get allowance
+      const callResult = await this.provider.call({
+        to: contractAddress,
+        data,
+      });
+
+      const result = iface.decodeFunctionResult('allowance', callResult);
+      return result[0];
+    } catch (error) {
+      throw new Error(`Failed to check PCT allowance: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
   }
 

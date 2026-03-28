@@ -7,7 +7,6 @@
  */
 
 
-
 export interface X402PaymentOptions {
   apiKey?: string;
   secretKey?: string;

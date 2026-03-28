@@ -52,32 +52,42 @@ cp .env.example .env
 Configure in `.env` file / 在 `.env` 文件中配置：
 
 ```env
-# OKX API Credentials
-OKX_API_KEY=your_api_key
-OKX_SECRET_KEY=your_secret_key
-OKX_PASSPHRASE=your_passphrase
+# OKX API Credentials (Required for OnchainOS/x402)
+OKX_API_KEY=your_api_key_here
+OKX_SECRET_KEY=your_secret_key_here
+OKX_PASSPHRASE=your_passphrase_here
 
-# predp.red Contract / predp.red 合约
-PREDP_CONTRACT_ADDRESS=0x...
-
-# X Layer RPC
+# X Layer Network Configuration
 X_LAYER_RPC_URL=https://xlayerrpc.okx.com
+X_LAYER_CHAIN_ID=196
 
-# Language / 语言 (optional / 可选)
-LANGUAGE=zh  # or 'en'
+# predp.red Smart Contract
+PREDP_CONTRACT_ADDRESS=0xYourContractAddressHere
+PCT_TOKEN_ADDRESS=0xYourPctTokenAddressHere
+PREDP_SERVICE_URL=https://xlayer.predp.red
+
+# AI Model Configuration (optional)
+AI_MODEL=gpt-4-turbo
+AI_API_KEY=your_ai_api_key_here
+
+# Development Mode
+NODE_ENV=development
 ```
 
 ---
 
 ## 📖 Features / 功能特性
 
-### 1. View Markets / 查看市场
+### 1. 预测市场交易 (PredPSkill)
 
 **Chinese / 中文**:
 ```
 用户：查看 predp.red 热门市场
 用户：显示市场 #123 的详细信息
 用户：我有哪些持仓？
+用户：在市场 #123 买入 100 USDT 的"是"份额
+用户：卖出我在市场 #123 的所有份额
+用户：平仓，卖出 50% 的持仓
 ```
 
 **English**:
@@ -85,68 +95,84 @@ LANGUAGE=zh  # or 'en'
 User: View predp.red popular markets
 User: Show market #123 details
 User: What are my positions?
-```
-
-### 2. Buy Operation / 买入操作
-
-**Chinese / 中文**:
-```
-用户：在市场 #123 买入 100 USDT 的"是"份额
-用户：我想投资这个预测，买 50 块
-```
-
-**English**:
-```
 User: Buy 100 USDT of Yes in market #123
-User: I want to invest in this prediction, buy 50
-```
-
-### 3. Sell Operation / 卖出操作
-
-**Chinese / 中文**:
-```
-用户：卖出我在市场 #123 的所有份额
-用户：平仓，卖出 50% 的持仓
-```
-
-**English**:
-```
 User: Sell all my positions in market #123
 User: Close position, sell 50% of holdings
 ```
 
-### 4. AI Enhancement / AI 增强
+### 2. $PCT 购买支付 (X402Skill)
+
+**Chinese / 中文**:
+```
+用户：购买 100 USDT 的 PCT
+用户：查看服务套餐
+用户：买 Love 套餐
+用户：购买 Host 服务
+用户：检查我的余额
+```
+
+**English**:
+```
+User: Buy 100 USDT of PCT
+User: View service plans
+User: Buy Love package
+User: Purchase Host service
+User: Check my balance
+```
+
+### 3. AI Enhancement / AI 增强
 
 - **Chinese**: 市场洞察和趋势分析、风险评估和提示、收益计算、智能市场推荐
 - **English**: Market insights and trend analysis, Risk assessment and warnings, Profit calculation, Smart market recommendations
 
+### 4. 多语言支持
+
+- **默认语言**: 中文 (Chinese)
+- **支持切换**: 发送 "Switch to English" 或 "切换到英文" 切换到英文
+- **环境变量**: 设置 `LANGUAGE=en` 或 `LANGUAGE=zh`
+
 ## 🏗️ 技术架构
 
 ```
-┌─────────────────┐
-│   OpenClaw AI   │
-│    Interface    │
-└────────┬────────┘
-         │
-         ↓
-┌─────────────────┐
-│  Intent Parser  │ ← AI 意图识别
-└────────┬────────┘
-         │
-         ↓
-┌─────────────────┐
-│  x402 Payment   │ ← OKX x402 协议
-└────────┬────────┘
-         │
-         ↓
-┌─────────────────┐
-│ Smart Contract  │ ← predp.red 合约
-└────────┬────────┘
-         │
-         ↓
-┌─────────────────┐
-│  X Layer L2     │ ← 交易上链
-└─────────────────┘
+┌──────────────────────┐
+│   OpenClaw AI        │
+│    Interface         │
+└──────────┬───────────┘
+           │
+           ↓
+┌──────────────────────┐
+│  Intent Parser       │ ← AI 意图识别
+└──────────┬───────────┘
+           │
+           ├──────────────┐
+           │              │
+           ↓              ↓
+┌──────────────────────┐ ┌──────────────────────┐
+│  PredPSkill          │ │  X402Skill           │
+│  预测市场交易处理    │ │  $PCT 购买支付处理   │
+└──────────┬───────────┘ └──────────┬───────────┘
+           │                        │
+           └──────────┬─────────────┘
+                      │
+                      ↓
+┌──────────────────────┐
+│  Agentic Wallet      │ ← OKX API 集成
+└──────────┬───────────┘
+           │
+           ├──────────────┐
+           │              │
+           ↓              ↓
+┌──────────────────────┐ ┌──────────────────────┐
+│  x402 Payment        │ │ Smart Contract       │
+│  x402 支付协议       │ │ predp.red 合约调用   │
+└──────────┬───────────┘ └──────────┬───────────┘
+           │                        │
+           └──────────┬─────────────┘
+                      │
+                      ↓
+┌──────────────────────┐
+│   X Layer L2         │ ← 交易上链
+└──────────────────────┘
 ```
 
 ## 💻 使用示例
@@ -155,15 +181,45 @@ User: Close position, sell 50% of holdings
 
 ```typescript
 import { PredPSkill } from './src/skills/predp-skill';
+import { loadConfig } from './src/utils/config';
+
+const config = loadConfig();
 
 const skill = new PredPSkill({
-  apiKey: process.env.OKX_API_KEY,
-  secretKey: process.env.OKX_SECRET_KEY,
-  passphrase: process.env.OKX_PASSPHRASE,
+  apiKey: config.okx.apiKey,
+  secretKey: config.okx.secretKey,
+  passphrase: config.okx.passphrase,
+  contractAddress: config.predp.contractAddress,
+  pctTokenAddress: config.predp.pctTokenAddress,
+  rpcUrl: config.xlayer.rpcUrl,
+  language: 'zh', // or 'en'
 });
 
 // 处理用户指令
 const response = await skill.handleMessage('在市场 #123 买入 100 USDT 的是');
+console.log(response);
+```
+
+### x402 Payment Skill 使用
+
+```typescript
+import { X402Skill } from './src/skills/x402-skill';
+import { loadConfig } from './src/utils/config';
+
+const config = loadConfig();
+
+const skill = new X402Skill({
+  apiKey: config.okx.apiKey,
+  secretKey: config.okx.secretKey,
+  passphrase: config.okx.passphrase,
+  rpcUrl: config.xlayer.rpcUrl,
+  pctTokenAddress: config.predp.pctTokenAddress,
+  serviceUrl: config.predp.serviceUrl,
+  language: 'zh', // or 'en'
+});
+
+// 处理用户购买 $PCT 指令
+const response = await skill.handleMessage('购买 100 USDT 的 PCT');
 console.log(response);
 ```
 
@@ -179,6 +235,8 @@ npx skills add okx/onchainos-skills
 ```
 /predp 查看热门市场
 /predp 买入市场 123 100 USDT 是
+/x402 购买 100 USDT 的 PCT
+/x402 查看服务套餐
 ```
 
 ## 🔧 API 参考
@@ -195,7 +253,10 @@ interface PredPSkillOptions {
   secretKey: string;
   passphrase: string;
   contractAddress: string;
+  pctTokenAddress: string;
   rpcUrl?: string;
+  chainId?: number;
+  language?: 'zh' | 'en';
 }
 ```
 
@@ -218,6 +279,47 @@ interface PredPSkillOptions {
 #### getUserPositions(address: string): Promise<Position[]>
 
 获取用户持仓信息
+
+### X402Skill 类
+
+#### constructor(options)
+
+初始化 x402 支付 Skill 实例
+
+```typescript
+interface X402SkillOptions {
+  apiKey: string;
+  secretKey: string;
+  passphrase: string;
+  rpcUrl?: string;
+  chainId?: number;
+  language?: Language;
+  recipientAddress?: string; // x402 payment recipient address
+  pctTokenAddress?: string; // $PCT token contract address
+  usdtTokenAddress?: string; // USDT token contract address on X Layer
+  serviceUrl?: string; // predp.red service URL
+}
+```
+
+#### handleMessage(message: string): Promise<string>
+
+处理用户购买 $PCT 的消息并返回响应
+
+#### buyPCT(amount: number): Promise<string>
+
+购买指定金额的 $PCT (1:1 ratio of USDT to $PCT)
+
+#### buyLovePackage(): Promise<string>
+
+购买 Love 套餐：固定 99 USDT → 200 $PCT
+
+#### buyHostPackage(): Promise<string>
+
+购买 Host 套餐：固定 999 USDT → 999 $PCT
+
+#### checkBalance(): Promise<string>
+
+检查用户 USDT 和 $PCT 余额
 
 ## 📝 交易流程
 

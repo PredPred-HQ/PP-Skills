@@ -235,7 +235,7 @@ Examples:
     try {
       const axios = await import('axios');
       // Call Nuxt app's x402 verify API to verify payment and get PCT transfer info
-      const response = await axios.default.post(`${this.options.serviceUrl || 'http://localhost:3001'}/api/x402/verifyPayment`, {
+      const response = await axios.default.post(`${this.options.serviceUrl || 'https://xlayer.predp.red'}/api/x402/verifyPayment`, {
         txHash: intent.txHash,
         fromAddress: await this.agenticWallet.getAddress(), // Get user's address from wallet
       });

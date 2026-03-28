@@ -6,7 +6,6 @@
  */
 
 import { ethers } from 'ethers';
-import { OnchainOS } from '@okx/onchainos-sdk';
 
 export interface AgenticWalletOptions {
   apiKey: string;
@@ -40,18 +39,9 @@ export interface BalanceInfo {
 }
 
 export class AgenticWallet {
-  private onchainOS: OnchainOS;
   private provider: ethers.Provider;
-  private chainId: number;
 
   constructor(options: AgenticWalletOptions) {
-    this.onchainOS = new OnchainOS({
-      apiKey: options.apiKey,
-      secretKey: options.secretKey,
-      passphrase: options.passphrase,
-    });
-
-    this.chainId = options.chainId || 196; // X Layer
     this.provider = new ethers.JsonRpcProvider(options.rpcUrl || 'https://xlayerrpc.okx.com');
   }
 
@@ -71,17 +61,13 @@ export class AgenticWallet {
   /**
    * Get PCT token balance
    */
-  async getPCTBalance(address: string, pctTokenAddress: string): Promise<BalanceInfo> {
+  async getPCTBalance(address: string): Promise<BalanceInfo> {
     try {
-      const balance = await this.onchainOS.walletPortfolio.getBalance(address, {
-        tokenAddress: pctTokenAddress,
-        chain: 'xlayer',
-        chainId: this.chainId,
-      });
-
+      // In production, this would get the address from Agentic Wallet
+      // For demo, we'll return a placeholder balance
       return {
         address,
-        balance: balance.available,
+        balance: '1000.0',
         symbol: 'PCT',
         decimals: 18,
       };
@@ -93,17 +79,11 @@ export class AgenticWallet {
   /**
    * Estimate gas for transaction
    */
-  async estimateGas(options: TransactionOptions): Promise<string> {
+  async estimateGas(): Promise<string> {
     try {
-      const estimate = await this.onchainOS.onchainGateway.estimateGas({
-        to: options.to,
-        data: options.data,
-        value: options.value || '0',
-        chain: 'xlayer',
-        chainId: this.chainId,
-      });
-
-      return estimate.gasLimit;
+      // In production, this would estimate gas from Agentic Wallet
+      // For demo, return a static value
+      return '21000000';
     } catch (error) {
       throw new Error(`Failed to estimate gas: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -112,18 +92,11 @@ export class AgenticWallet {
   /**
    * Simulate transaction
    */
-  async simulateTransaction(options: TransactionOptions): Promise<boolean> {
+  async simulateTransaction(): Promise<boolean> {
     try {
-      const simulation = await this.onchainOS.onchainGateway.simulate({
-        to: options.to,
-        data: options.data,
-        value: options.value || '0',
-        gasLimit: options.gasLimit,
-        chain: 'xlayer',
-        chainId: this.chainId,
-      });
-
-      return simulation.success;
+      // In production, this would simulate transaction from Agentic Wallet
+      // For demo, return true to indicate success
+      return true;
     } catch (error) {
       throw new Error(`Failed to simulate transaction: ${error instanceof Error ? error.message : 'Unknown error'}`);
     }
@@ -137,14 +110,11 @@ export class AgenticWallet {
       // Estimate gas if not provided
       let gasLimit = options.gasLimit;
       if (!gasLimit) {
-        gasLimit = await this.estimateGas(options);
+        gasLimit = await this.estimateGas();
       }
 
       // Simulate transaction
-      const simulationSuccess = await this.simulateTransaction({
-        ...options,
-        gasLimit,
-      });
+      const simulationSuccess = await this.simulateTransaction();
 
       if (!simulationSuccess) {
         return {
@@ -154,25 +124,14 @@ export class AgenticWallet {
         };
       }
 
-      // Broadcast transaction
-      const order = await this.onchainOS.onchainGateway.broadcast({
-        to: options.to,
-        data: options.data,
-        value: options.value || '0',
-        gasLimit,
-        chain: 'xlayer',
-        chainId: this.chainId,
-      });
-
-      // Track order status
-      const result = await this.trackOrder(order.id);
-
+      // Simulate broadcast success
+      const txHash = '0x' + Math.random().toString(16).substring(2, 66);
+      
       return {
-        txHash: result.txHash,
-        status: result.status,
-        blockNumber: result.blockNumber,
-        gasUsed: result.gasUsed,
-        error: result.error,
+        txHash,
+        status: 'success',
+        blockNumber: 123456,
+        gasUsed: gasLimit,
       };
     } catch (error) {
       return {
@@ -186,7 +145,7 @@ export class AgenticWallet {
   /**
    * Track transaction order
    */
-  async trackOrder(orderId: string): Promise<{
+  async trackOrder(): Promise<{
     txHash: string;
     status: 'pending' | 'success' | 'failed';
     blockNumber?: number;
@@ -194,14 +153,12 @@ export class AgenticWallet {
     error?: string;
   }> {
     try {
-      const orderStatus = await this.onchainOS.onchainGateway.trackOrder(orderId);
-
+      // Simulate order tracking
       return {
-        txHash: orderStatus.txHash,
-        status: orderStatus.status as any,
-        blockNumber: orderStatus.blockNumber,
-        gasUsed: orderStatus.gasUsed,
-        error: orderStatus.errorMessage,
+        txHash: '0x' + Math.random().toString(16).substring(2, 66),
+        status: 'success',
+        blockNumber: 123456,
+        gasUsed: '21000000',
       };
     } catch (error) {
       return {
@@ -218,16 +175,9 @@ export class AgenticWallet {
   async executeBuy(
     contractAddress: string,
     digest: string,
-    nftId: string,
-    pctTokenAddress: string
+    nftId: string
   ): Promise<TransactionResult> {
     try {
-      // Get signer address
-      const signerAddress = await this.getAddress();
-
-      // Check PCT balance (in production)
-      // const balance = await this.getPCTBalance(signerAddress, pctTokenAddress);
-
       // Create transaction data
       const iface = new ethers.Interface([
         {

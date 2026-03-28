@@ -1,13 +1,15 @@
+#!/usr/bin/env node
+
 /**
- * PredP.red AI Skill - Main Entry Point
+ * PredP.red x402 Payment Skill - Main Entry Point
  * 
- * AI-powered trading assistant for predp.red prediction market
- * with x402 payment integration on X Layer
+ * AI-powered x402 payment assistant for purchasing $PCT tokens
+ * on X Layer
  * 
  * 多语言支持 / Multi-language Support: 中文 (Chinese) & English
  */
 
-import { PredPSkill } from './skills/predp-skill';
+import { X402Skill } from './skills/x402-skill';
 import { loadConfig } from './utils/config';
 import { Language } from './i18n/index';
 
@@ -18,23 +20,27 @@ async function main() {
   const envLanguage = process.env.LANGUAGE || process.env.LANG || 'zh';
   const language: Language = envLanguage.includes('zh') ? 'zh' : 'en';
   
-  const skill = new PredPSkill({
+  const skill = new X402Skill({
     apiKey: config.okx.apiKey,
     secretKey: config.okx.secretKey,
     passphrase: config.okx.passphrase,
-    contractAddress: config.predp.contractAddress,
+    recipientAddress: config.predp.contractAddress, // 使用合约地址作为默认接收地址
     pctTokenAddress: config.predp.pctTokenAddress,
     rpcUrl: config.xlayer.rpcUrl,
+    chainId: config.xlayer.chainId,
     language: language,
+    serviceUrl: config.predp.serviceUrl, // 添加服务 URL 配置
   });
 
-  console.log('🚀 PredP.red AI Skill initialized');
+  console.log('🚀 PredP.red x402 Payment Skill initialized');
   console.log('🌐 Language / 语言:', language.toUpperCase());
+  console.log('📡 Service URL / 服务地址:', config.predp.serviceUrl);
   console.log('Ready to process commands...');
   console.log('\nExample commands / 示例命令:');
-  console.log('  - 查看 predp.red 热门市场 / View predp.red popular markets');
-  console.log('  - 在市场 #123 买入 100 USDT 的是 / Buy 100 USDT of Yes in market #123');
-  console.log('  - 卖出市场 #123 的所有持仓 / Sell all positions in market #123');
+  console.log('  - 购买 Love 服务 / Buy Love service');
+  console.log('  - 购买 Try 服务 50 USDT / Buy Try service 50 USDT');
+  console.log('  - 查看我的钱包余额 / Check my wallet balance');
+  console.log('  - 验证支付 0xabc123... / Verify payment 0xabc123...');
   console.log('  - Switch to English / 切换到英文');
   console.log('  - Switch to Chinese / 切换到中文\n');
 

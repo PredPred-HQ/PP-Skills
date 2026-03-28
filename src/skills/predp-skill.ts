@@ -4,8 +4,7 @@
  */
 
 import { ethers } from 'ethers';
-import { OnchainOS } from '@okx/onchainos-sdk';
-import PREDP_ABI from '../contracts/predp-abi.json' assert { type: 'json' };
+import PREDP_ABI from '../contracts/predp-abi.json';
 import { I18nService, Language } from '../i18n';
 import { AgenticWallet } from '../utils/agentic-wallet';
 
@@ -51,7 +50,6 @@ export interface TradeIntent {
 export class PredPSkill {
   private provider: ethers.Provider;
   private contract: ethers.Contract;
-  private onchainOS: OnchainOS;
   private agenticWallet: AgenticWallet;
   private options: PredPSkillOptions;
   private i18n: I18nService;
@@ -62,12 +60,6 @@ export class PredPSkill {
     
     this.provider = new ethers.JsonRpcProvider(options.rpcUrl || 'https://xlayerrpc.okx.com');
     this.contract = new ethers.Contract(options.contractAddress, PREDP_ABI, this.provider);
-    
-    this.onchainOS = new OnchainOS({
-      apiKey: options.apiKey,
-      secretKey: options.secretKey,
-      passphrase: options.passphrase,
-    });
 
     this.agenticWallet = new AgenticWallet({
       apiKey: options.apiKey,
@@ -493,11 +485,10 @@ ${t.t('helpDescription')}:
   async buy(digest: string, nftId: string): Promise<string> {
     try {
       const result = await this.agenticWallet.executeBuy(
-        this.options.contractAddress,
-        digest,
-        nftId,
-        this.options.pctTokenAddress
-      );
+          this.options.contractAddress,
+          digest,
+          nftId
+        );
       
       const t = this.i18n;
       if (result.status === 'success') {

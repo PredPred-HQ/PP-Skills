@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "description": "AI Skill for predp.red prediction market with x402 payment integration on X Layer",
   "main": "dist/index.js",
-  "type": "module",
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "start:x402": "node dist/x402-entry.js",
     "dev": "ts-node src/index.ts",
+    "dev:x402": "ts-node src/x402-entry.ts",
     "test": "jest",
     "lint": "eslint src/**/*.ts"
   },
@@ -22,21 +23,20 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "@okx/onchainos-sdk": "^1.0.0",
-    "ethers": "^6.11.0",
-    "dotenv": "^16.4.1",
     "axios": "^1.6.7",
+    "dotenv": "^16.4.1",
+    "ethers": "^6.11.0",
     "zod": "^3.22.4"
   },
   "devDependencies": {
-    "typescript": "^5.3.3",
-    "ts-node": "^10.9.2",
-    "@types/node": "^20.11.0",
-    "jest": "^29.7.0",
     "@types/jest": "^29.5.12",
-    "ts-jest": "^29.1.2",
-    "eslint": "^8.56.0",
+    "@types/node": "^20.19.37",
     "@typescript-eslint/eslint-plugin": "^6.20.0",
-    "@typescript-eslint/parser": "^6.20.0"
+    "@typescript-eslint/parser": "^6.20.0",
+    "eslint": "^8.56.0",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.1.2",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
   }
 }

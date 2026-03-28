@@ -16,6 +16,7 @@ const configSchema = z.object({
   predp: z.object({
     contractAddress: z.string(),
     pctTokenAddress: z.string(),
+    serviceUrl: z.string().default('http://localhost:3001'),
   }),
   xlayer: z.object({
     rpcUrl: z.string(),
@@ -39,6 +40,7 @@ export function loadConfig(): Config {
     predp: {
       contractAddress: process.env.PREDP_CONTRACT_ADDRESS || '',
       pctTokenAddress: process.env.PCT_TOKEN_ADDRESS || '',
+      serviceUrl: process.env.PREDP_SERVICE_URL || 'http://localhost:3001',
     },
     xlayer: {
       rpcUrl: process.env.X_LAYER_RPC_URL || 'https://xlayerrpc.okx.com',

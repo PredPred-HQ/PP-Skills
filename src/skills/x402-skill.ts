@@ -10,8 +10,6 @@
  * - Host: Fixed 999 USDT → 999 $PCT
  */
 
-import { ethers } from 'ethers';
-import { OnchainOS } from '@okx/onchainos-sdk';
 import { I18nService, Language } from '../i18n';
 import { X402Payment, PaymentAuthorization } from '../utils/x402-payment';
 import { AgenticWallet } from '../utils/agentic-wallet';
@@ -26,6 +24,7 @@ export interface X402SkillOptions {
   recipientAddress?: string; // x402 payment recipient address
   pctTokenAddress?: string; // $PCT token contract address
   usdtTokenAddress?: string; // USDT token contract address on X Layer
+  serviceUrl?: string; // predp.red service URL
 }
 
 export interface PurchaseIntent {
@@ -34,21 +33,16 @@ export interface PurchaseIntent {
   amount?: number;
   txHash?: string;
 }
-
 export class X402Skill {
-  private provider: ethers.Provider;
-  private onchainOS: OnchainOS;
+  private i18n: I18nService;
   private x402Payment: X402Payment;
   private agenticWallet: AgenticWallet;
   private options: X402SkillOptions;
-  private i18n: I18nService;
 
   constructor(options: X402SkillOptions) {
     this.options = options;
     this.i18n = new I18nService(options.language || 'zh');
-    
-    this.provider = new ethers.JsonRpcProvider(options.rpcUrl || 'https://xlayerrpc.okx.com');
-    
+
     this.x402Payment = new X402Payment({
       apiKey: options.apiKey,
       secretKey: options.secretKey,
@@ -206,16 +200,11 @@ Examples:
     
     try {
       // Create x402 payment authorization
-      const authorization = await this.x402Payment.authorizePayment({
-        amount: paymentDetails.usdtAmount.toString(),
-        recipient: this.options.recipientAddress || '0x779ded0c9e1022225f8e0630b35a9b54be713736', // X Layer USDT address as default
-        resource: `pct-purchase-${intent.service}`,
-        metadata: {
-          service: intent.service,
-          pctAmount: paymentDetails.pctAmount,
-          usdtAmount: paymentDetails.usdtAmount,
-        },
-      });
+      const authorization = await this.x402Payment.authorizePayment(
+        paymentDetails.usdtAmount.toString(),
+        this.options.recipientAddress || '0x779ded0c9e1022225f8e0630b35a9b54be713736',
+        'USDT'
+      );
 
       return this.formatPurchaseConfirmation(paymentDetails, authorization);
     } catch (error) {
@@ -246,16 +235,16 @@ Examples:
     try {
       const axios = await import('axios');
       // Call Nuxt app's x402 verify API to verify payment and get PCT transfer info
-      const response = await axios.default.post('http://localhost:3001/api/x402/verifyPayment', {
+      const response = await axios.default.post(`${this.options.serviceUrl || 'http://localhost:3001'}/api/x402/verifyPayment`, {
         txHash: intent.txHash,
         fromAddress: await this.agenticWallet.getAddress(), // Get user's address from wallet
       });
 
-      if (!response.ok) {
+      if (response.status !== 200) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
-      const result = await response.json();
+      const result = response.data;
 
       if (result.success) {
         return this.formatVerificationResult(result.data);
@@ -384,38 +373,30 @@ Examples:
     try {
       const address = await this.agenticWallet.getAddress();
       const balance = await this.x402Payment.getBalance(address);
+      const balanceNumber = parseFloat(balance);
       
       if (isZh) {
         return `💼 **我的钱包余额**
+🏦 **地址**: ${address}
+💰 **USDT 余额**: ${balance} USDT
+🌐 **网络**: X Layer Mainnet
 
-🏦 **地址**: ${address.substring(0, 6)}...${address.substring(address.length - 4)}
-💰 **可用余额**: ${balance.available} USDT
-🔒 **锁定余额**: ${balance.locked} USDT
-📊 **总余额**: ${balance.total} USDT
-
-💡 **余额说明**:
-- 可用余额：可用于支付 x402 服务的金额
-- 锁定余额：正在处理中的交易金额
-- 总余额：钱包中 USDT 的总额
-
-📝 ${isZh ? '想购买 $PCT 吗？告诉我您想使用的服务套餐~' : 'Want to buy $PCT? Tell me which service package you want to use~'}`;
+💡 ${balanceNumber < 50
+            ? '您的余额低于 50 USDT，建议先充值再购买 $PCT。'
+            : '您的余额充足，可以开始购买 $PCT！'}`;
       } else {
         return `💼 **My Wallet Balance**
+🏦 **Address**: ${address}
+💰 **USDT Balance**: ${balance} USDT
+🌐 **Network**: X Layer Mainnet
 
-🏦 **Address**: ${address.substring(0, 6)}...${address.substring(address.length - 4)}
-💰 **Available Balance**: ${balance.available} USDT
-🔒 **Locked Balance**: ${balance.locked} USDT
-📊 **Total Balance**: ${balance.total} USDT
-
-💡 **Balance Explanation**:
-- Available: Amount available for x402 service payment
-- Locked: Amount in processing transactions
-- Total: Total USDT in wallet
-
-📝 Want to buy $PCT? Tell me which service package you want to use~`;
+💡 ${balanceNumber < 50
+            ? 'Your balance is less than 50 USDT. Please recharge before purchasing $PCT.'
+            : 'Your balance is sufficient. You can start purchasing $PCT!'}`;
       }
     } catch (error) {
-      return `${t.t('error')}: ${error instanceof Error ? error.message : 'Unknown error'}`;
+      const errorMsg = isZh ? '获取余额失败' : 'Failed to get balance';
+      return `❌ ${errorMsg}: ${error instanceof Error ? error.message : 'Unknown error'}`;
     }
   }
 
@@ -424,57 +405,59 @@ Examples:
     const isZh = t.getLanguage() === 'zh';
     
     if (isZh) {
-      return `✅ **购买 $PCT 确认**
+      return `✅ **$PCT 购买确认**
 
 📋 **服务详情**：
-- 🛍️ 服务类型：${paymentDetails.service} 服务
+- 🛍️ 服务类型：${paymentDetails.service}
 - 💰 支付金额：${paymentDetails.usdtAmount} USDT
-- 🎁 获得 $PCT：${paymentDetails.pctAmount} 个
-- 📊 汇率：1 USDT = ${(paymentDetails.pctAmount / paymentDetails.usdtAmount).toFixed(2)} $PCT
+- 🎁 获得 $PCT：${paymentDetails.pctAmount} PCT
+- 📊 汇率：${paymentDetails.pctAmount / paymentDetails.usdtAmount} PCT/USDT
 
 🔐 **支付授权信息**：
-- 🆔 资源 ID：pct-purchase-${paymentDetails.service.toLowerCase()}
-- 🔑 授权签名：${authorization.signature.substring(0, 12)}...
-- ⏰ 时间戳：${new Date(authorization.timestamp).toLocaleString()}
+- � 签名：${authorization.signature.slice(0, 12)}...
+- 🎯 收款人地址：${this.options.recipientAddress || '0x779ded0c9e1022225f8e0630b35a9b54be713736'}
+- 🌐 网络：X Layer Mainnet
 
 💳 **支付步骤**：
-1. 确认支付金额：${paymentDetails.usdtAmount} USDT
-2. 使用 OKX x402 协议支付
-3. 支付完成后保存交易哈希
-4. 回复交易哈希进行验证
+1. 确认支付信息无误
+2. 使用您的 OKX 钱包签署支付授权
+3. 交易将自动验证并执行
+4. $PCT 代币将发送到您的钱包
 
-⚠️ **支付提示**：
+⚠️ **重要提示**：
 - 请确保您的钱包中有足够的 USDT 余额
-- 支付将通过 X Layer 主网进行
-- 购买的 $PCT 代币将在支付验证成功后自动发放
+- 交易将在 X Layer Mainnet 上执行
+- 支付成功后无法取消
+- 如果您有任何问题，请联系客服
 
-💡 回复 "确认" 或 "Confirm" 开始支付流程，回复 "取消" 或 "Cancel" 取消`;
+� 回复 "确认" 或 "Confirm" 继续支付，回复 "取消" 或 "Cancel" 取消购买。`;
     } else {
       return `✅ **$PCT Purchase Confirmation**
 
 📋 **Service Details**：
-- 🛍️ Service Type: ${paymentDetails.service} service
-- 💰 Payment Amount: ${paymentDetails.usdtAmount} USDT
-- 🎁 Get $PCT: ${paymentDetails.pctAmount} units
-- 📊 Rate: 1 USDT = ${(paymentDetails.pctAmount / paymentDetails.usdtAmount).toFixed(2)} $PCT
+- 🛍️ Service Type：${paymentDetails.service}
+- 💰 Payment Amount：${paymentDetails.usdtAmount} USDT
+- 🎁 $PCT to Receive：${paymentDetails.pctAmount} PCT
+- 📊 Exchange Rate：${paymentDetails.pctAmount / paymentDetails.usdtAmount} PCT/USDT
 
 🔐 **Payment Authorization**：
-- 🆔 Resource ID: pct-purchase-${paymentDetails.service.toLowerCase()}
-- 🔑 Authorization Signature: ${authorization.signature.substring(0, 12)}...
-- ⏰ Timestamp: ${new Date(authorization.timestamp).toLocaleString()}
+- � Signature：${authorization.signature.slice(0, 12)}...
+- 🎯 Recipient Address：${this.options.recipientAddress || '0x779ded0c9e1022225f8e0630b35a9b54be713736'}
+- 🌐 Network：X Layer Mainnet
 
 💳 **Payment Steps**：
-1. Confirm payment amount: ${paymentDetails.usdtAmount} USDT
-2. Pay using OKX x402 protocol
-3. Save transaction hash after payment
-4. Reply with txHash for verification
+1. Verify the payment information is correct
+2. Sign the payment authorization with your OKX Wallet
+3. Transaction will be automatically verified and executed
+4. $PCT tokens will be sent to your wallet
 
-⚠️ **Payment Instructions**：
-- Please ensure you have enough USDT balance in your wallet
-- Payment will be made on X Layer Mainnet
-- Purchased $PCT tokens will be automatically issued after payment verification
+⚠️ **Important Note**：
+- Ensure your wallet has sufficient USDT balance
+- The transaction will be executed on X Layer Mainnet
+- Payments cannot be canceled after confirmation
+- If you have any questions, please contact support
 
-💡 Reply "Confirm" to start payment, reply "Cancel" to cancel`;
+� Reply "Confirm" to continue, reply "Cancel" to cancel purchase.`;
     }
   }
 
@@ -594,13 +577,12 @@ ${t.t('helpDescription')}:
     }
   }
 
-  async executePayment(authorization: string): Promise<string> {
+  async executePayment(): Promise<string> {
     try {
       const result = await this.agenticWallet.executeBuy(
-        this.options.pctTokenAddress || '0x4ACc6ce38a319a6D0689a5eC84B6d0a39B64c475', // X Layer default
+        this.options.recipientAddress || '0x779ded0c9e1022225f8e0630b35a9b54be713736',
         'pct-purchase',
-        '1', // Placeholder NFT ID for x402 payment
-        this.options.pctTokenAddress || '0x4ACc6ce38a319a6D0689a5eC84B6d0a39B64c475'
+        '1'
       );
       
       const t = this.i18n;

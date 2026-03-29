@@ -308,15 +308,64 @@ export class AgenticWallet {
         targetSupply
       ]);
 
+      // 首先检查合约是否有代码
+      const code = await this.provider.getCode(contractAddress);
+      if (code === '0x') {
+        throw new Error(`合约地址 ${contractAddress} 在当前网络上不存在或未部署。请确认：\n1. 是否连接到正确的网络 (X Layer)\n2. 合约地址是否正确`);
+      }
+
       const callResult = await this.provider.call({
         to: contractAddress,
         data,
       });
 
+      // 检查是否返回错误
+      if (callResult.startsWith('0x') && callResult.length < 10) {
+        throw new Error('市场不存在 (MarketNotExists): 请检查 marketDigest 是否正确');
+      }
+
       const result = iface.decodeFunctionResult('getMarket', callResult);
       return result;
-    } catch (error) {
-      throw new Error(`Failed to get market info: ${error instanceof Error ? error.message : 'Unknown error'}`);
+    } catch (error: any) {
+      // 解析合约错误
+      if (error.message?.includes('MarketNotExists')) {
+        throw new Error(`市场不存在: digest "${digest}" 在合约中未找到`);
+      }
+      if (error.message?.includes('call revert exception') || error.message?.includes('execution reverted')) {
+        throw new Error(`合约调用失败: 可能是 marketDigest 不存在或参数错误。\nDigest: ${digest}`);
+      }
+      throw new Error(`获取市场信息失败: ${error instanceof Error ? error.message : '未知错误'}`);
+    }
+  }
+
+  /**
+   * Get market digest list
+   * @param contractAddress Contract address
+   * @param start Start index (0-based)
+   * @param limit Maximum number of digests to return
+   * @returns Array of market digests (bytes32[])
+   */
+  async getMarketList(contractAddress: string, start: number = 0, limit: number = 10): Promise<string[]> {
+    try {
+      const iface = new ethers.Interface(PPAppABI);
+
+      const data = iface.encodeFunctionData('getMarketList', [
+        start,
+        limit
+      ]);
+
+      const callResult = await this.provider.call({
+        to: contractAddress,
+        data,
+      });
+
+      const result = iface.decodeFunctionResult('getMarketList', callResult);
+      return result[0];
+    } catch (error: any) {
+      if (error.message?.includes('call revert exception') || error.message?.includes('execution reverted')) {
+        throw new Error(`获取市场列表失败: 合约调用异常`);
+      }
+      throw new Error(`获取市场列表失败: ${error instanceof Error ? error.message : '未知错误'}`);
     }
   }
 }

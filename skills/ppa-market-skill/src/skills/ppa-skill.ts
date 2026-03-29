@@ -38,7 +38,7 @@ export interface Position {
 }
 
 export interface TradeIntent {
-  action: 'BUY' | 'SELL' | 'VIEW_MARKET' | 'VIEW_POSITIONS' | 'APPROVE';
+  action: 'BUY' | 'SELL' | 'VIEW_MARKET' | 'VIEW_POSITIONS' | 'APPROVE' | 'MARKET_LIST';
   amount?: number;
   outcome?: 'YES' | 'NO';
   percentage?: number;
@@ -79,6 +79,8 @@ export class PPAMarketSkill {
         return await this.handleViewPositions();
       case 'APPROVE':
         return await this.handleApprove(intent);
+      case 'MARKET_LIST':
+        return await this.handleMarketList();
       default:
         return this.getHelpMessage();
     }
@@ -96,6 +98,7 @@ export class PPAMarketSkill {
     const zhPositions = lowerMessage.includes('持仓') || lowerMessage.includes('我的');
     const zhMarket = lowerMessage.includes('市场') || lowerMessage.includes('查看');
     const zhApprove = lowerMessage.includes('批准') || lowerMessage.includes('approve');
+    const zhMarketList = lowerMessage.includes('市场列表') || lowerMessage.includes('所有市场') || lowerMessage.includes('市场digest');
     
     // English patterns
     const enBuy = lowerMessage.includes('buy') || lowerMessage.includes('invest');
@@ -103,6 +106,11 @@ export class PPAMarketSkill {
     const enPositions = lowerMessage.includes('position') || lowerMessage.includes('holding');
     const enMarket = lowerMessage.includes('market') || lowerMessage.includes('view');
     const enApprove = lowerMessage.includes('approve');
+    const enMarketList = lowerMessage.includes('market list') || lowerMessage.includes('all markets') || lowerMessage.includes('market digests');
+
+    if (zhMarketList || enMarketList) {
+      return { action: 'MARKET_LIST', _originalMessage: message };
+    }
     
     if (zhApprove || enApprove) {
       const amount = this.extractAmount(message);
@@ -241,6 +249,34 @@ export class PPAMarketSkill {
 加载中... (需要连接钱包)
 
 💡 请连接您的 X Layer 钱包以查看持仓信息`;
+  }
+
+  private async handleMarketList(): Promise<string> {
+    try {
+      const digests = await this.wallet.getMarketList(this.contractAddress, 0, 20);
+
+      if (digests.length === 0) {
+        return `📋 **市场列表**
+
+暂无活跃市场`;
+      }
+
+      let message = `📋 **市场列表** (共 ${digests.length} 个)\n\n`;
+
+      for (let i = 0; i < digests.length; i++) {
+        const digest = digests[i];
+        const shortDigest = `${digest.slice(0, 10)}...${digest.slice(-8)}`;
+        message += `${i + 1}. \`${shortDigest}\`\n`;
+        message += `   完整: \`${digest}\`\n\n`;
+      }
+
+      message += `💡 使用市场 digest 查看详情或进行交易\n`;
+      message += `示例: "查看市场" (使用配置中的默认市场)`;
+
+      return message;
+    } catch (error) {
+      return `❌ **获取市场列表失败**：${error instanceof Error ? error.message : '未知错误'}`;
+    }
   }
 
   private pendingBuyData: { nftId: string } | null = null;

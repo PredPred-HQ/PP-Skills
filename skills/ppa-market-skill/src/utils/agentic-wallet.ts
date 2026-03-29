@@ -6,6 +6,7 @@
  */
 
 import { ethers } from 'ethers';
+import PPAppABI from '../contracts/PPApp.json';
 
 export interface AgenticWalletOptions {
   apiKey: string;
@@ -239,19 +240,8 @@ export class AgenticWallet {
     nftId: string
   ): Promise<TransactionResult> {
     try {
-      // Create transaction data
-      const iface = new ethers.Interface([
-        {
-          "inputs": [
-            { "internalType": "bytes32", "name": "digest", "type": "bytes32" },
-            { "internalType": "uint256", "name": "nftId", "type": "uint256" }
-          ],
-          "name": "buy",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]);
+      // Create transaction data from imported ABI
+      const iface = new ethers.Interface(PPAppABI);
 
       const data = iface.encodeFunctionData('buy', [
         digest,
@@ -282,19 +272,8 @@ export class AgenticWallet {
     nftId: string
   ): Promise<TransactionResult> {
     try {
-      // Create transaction data
-      const iface = new ethers.Interface([
-        {
-          "inputs": [
-            { "internalType": "bytes32", "name": "digest", "type": "bytes32" },
-            { "internalType": "uint256", "name": "nftId", "type": "uint256" }
-          ],
-          "name": "sell",
-          "outputs": [],
-          "stateMutability": "nonpayable",
-          "type": "function"
-        }
-      ]);
+      // Create transaction data from imported ABI
+      const iface = new ethers.Interface(PPAppABI);
 
       const data = iface.encodeFunctionData('sell', [
         digest,
@@ -319,61 +298,14 @@ export class AgenticWallet {
   /**
    * Get market information
    */
-  async getMarketInfo(contractAddress: string, digest: string): Promise<any> {
+  async getMarketInfo(contractAddress: string, digest: string, targetSupply: bigint = ethers.toBigInt(1000)): Promise<any> {
     try {
-      const iface = new ethers.Interface([
-        {
-          "inputs": [
-            { "internalType": "bytes32", "name": "digest", "type": "bytes32" },
-            { "internalType": "uint256", "name": "targetSupply", "type": "uint256" }
-          ],
-          "name": "getMarket",
-          "outputs": [
-            {
-              "components": [
-                { "internalType": "bytes32", "name": "digest", "type": "bytes32" },
-                { "internalType": "uint256", "name": "resultNftId", "type": "uint256" },
-                { "internalType": "address", "name": "rewardERC20Token", "type": "address" },
-                { "internalType": "uint256", "name": "rewardTotalAmount", "type": "uint256" },
-                { "internalType": "uint256", "name": "yesNftId", "type": "uint256" },
-                { "internalType": "uint256", "name": "noNftId", "type": "uint256" },
-                { "internalType": "bool", "name": "isEnabled", "type": "bool" },
-                { "internalType": "bool", "name": "isEnded", "type": "bool" },
-                { "internalType": "bool", "name": "isFinalized", "type": "bool" },
-                { "internalType": "uint256", "name": "yesSupply", "type": "uint256" },
-                { "internalType": "uint256", "name": "noSupply", "type": "uint256" },
-                { "internalType": "uint256", "name": "k", "type": "uint256" },
-                { "internalType": "uint256", "name": "c", "type": "uint256" },
-                { "internalType": "uint256", "name": "poolTotalAmount", "type": "uint256" },
-                { "internalType": "uint256", "name": "platformFeeBps", "type": "uint256" },
-                { "internalType": "uint256", "name": "platformFeeAmount", "type": "uint256" },
-                { "internalType": "uint256", "name": "rewardTotalPayout", "type": "uint256" },
-                { "internalType": "uint256", "name": "pcPayout", "type": "uint256" },
-                { "internalType": "uint256", "name": "ptTokenPayout", "type": "uint256" }
-              ],
-              "internalType": "struct IAppStorage.Market",
-              "name": "market",
-              "type": "tuple"
-            },
-            {
-              "components": [
-                { "internalType": "uint256", "name": "targetSupplyPrice", "type": "uint256" },
-                { "internalType": "uint256", "name": "currentYesPrice", "type": "uint256" },
-                { "internalType": "uint256", "name": "currentNoPrice", "type": "uint256" }
-              ],
-              "internalType": "struct IAppStorage.PriceMeta",
-              "name": "priceMeta",
-              "type": "tuple"
-            }
-          ],
-          "stateMutability": "view",
-          "type": "function"
-        }
-      ]);
+      // Create interface from imported ABI
+      const iface = new ethers.Interface(PPAppABI);
 
       const data = iface.encodeFunctionData('getMarket', [
         digest,
-        ethers.toBigInt(1000) // Sample target supply
+        targetSupply
       ]);
 
       const callResult = await this.provider.call({

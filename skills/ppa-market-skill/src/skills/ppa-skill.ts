@@ -42,6 +42,7 @@ export interface TradeIntent {
   amount?: number;
   outcome?: 'YES' | 'NO';
   percentage?: number;
+  _originalMessage?: string;
 }
 
 export class PPAMarketSkill {
@@ -109,6 +110,7 @@ export class PPAMarketSkill {
       return {
         action: 'APPROVE',
         amount,
+        _originalMessage: message,
       };
     }
     
@@ -120,6 +122,7 @@ export class PPAMarketSkill {
         action: 'BUY',
         amount,
         outcome,
+        _originalMessage: message,
       };
     }
     
@@ -129,18 +132,19 @@ export class PPAMarketSkill {
       return {
         action: 'SELL',
         percentage,
+        _originalMessage: message,
       };
     }
     
     if (zhPositions || enPositions) {
-      return { action: 'VIEW_POSITIONS' };
+      return { action: 'VIEW_POSITIONS', _originalMessage: message };
     }
     
     if (zhMarket || enMarket) {
-      return { action: 'VIEW_MARKET' };
+      return { action: 'VIEW_MARKET', _originalMessage: message };
     }
     
-    return { action: 'VIEW_MARKET' };
+    return { action: 'VIEW_MARKET', _originalMessage: message };
   }
 
   private extractAmount(message: string): number | undefined {
@@ -195,7 +199,26 @@ export class PPAMarketSkill {
 💡 请连接您的 X Layer 钱包以查看持仓信息`;
   }
 
+  private pendingBuyData: { nftId: string } | null = null;
+
   private async handleBuy(intent: TradeIntent): Promise<string> {
+    // 检查是否是确认操作
+    const lowerMessage = intent._originalMessage?.toLowerCase() || '';
+    if (lowerMessage.includes('确认') || lowerMessage.includes('confirm')) {
+      if (this.pendingBuyData) {
+        const result = await this.buy(this.pendingBuyData.nftId);
+        this.pendingBuyData = null;
+        return result;
+      } else {
+        return '❌ 没有待确认的购买操作';
+      }
+    }
+    
+    if (lowerMessage.includes('取消') || lowerMessage.includes('cancel')) {
+      this.pendingBuyData = null;
+      return '✅ 已取消购买操作';
+    }
+
     if (!intent.amount || !intent.outcome) {
       return `❌ 请提供完整信息：
 - 购买数量 (例如：100 个)
@@ -227,6 +250,9 @@ export class PPAMarketSkill {
       }
 
       const nftId = intent.outcome === 'YES' ? HARDCODED_MARKET.yesNftId : HARDCODED_MARKET.noNftId;
+      
+      // 保存待确认的交易数据
+      this.pendingBuyData = { nftId: nftId.toString() };
 
       return `📋 **购买确认**
 
@@ -278,12 +304,44 @@ export class PPAMarketSkill {
     }
   }
 
+  private pendingSellData: { nftId: string } | null = null;
+
   private async handleSell(intent: TradeIntent): Promise<string> {
-    const nftId = '需要指定持仓方向 (1=YES, 2=NO)';
+    // 检查是否是确认操作
+    const lowerMessage = intent._originalMessage?.toLowerCase() || '';
+    if (lowerMessage.includes('确认') || lowerMessage.includes('confirm')) {
+      if (this.pendingSellData) {
+        const result = await this.sell(this.pendingSellData.nftId);
+        this.pendingSellData = null;
+        return result;
+      } else {
+        return '❌ 没有待确认的卖出操作';
+      }
+    }
+    
+    if (lowerMessage.includes('取消') || lowerMessage.includes('cancel')) {
+      this.pendingSellData = null;
+      return '✅ 已取消卖出操作';
+    }
+
+    // 需要让用户选择卖出方向（YES 或 NO）
+    const outcome = this.extractOutcome(intent._originalMessage || '');
+    
+    if (!outcome) {
+      return `❌ 请指定要卖出的持仓方向 (YES 或 NO)
+
+示例："卖出所有 YES token" 或 "出售 50% 的 NO token"`;
+    }
+
+    const nftId = outcome === 'YES' ? HARDCODED_MARKET.yesNftId : HARDCODED_MARKET.noNftId;
+    
+    // 保存待确认的交易数据
+    this.pendingSellData = { nftId: nftId.toString() };
 
     return `💰 **卖出确认**
 
 市场: ${HARDCODED_MARKET.title}
+方向: ${outcome === 'YES' ? '是 (YES)' : '否 (NO)'}
 卖出比例: ${intent.percentage || 100}%
 
 ⚠️ 请确认是否继续？(回复"确认"或"取消")
@@ -292,7 +350,7 @@ export class PPAMarketSkill {
 
 📋 **交易参数**:
 - Market Digest: \`${HARDCODED_MARKET.marketDigest}\`
-- NFT ID: ${nftId}`;
+- NFT ID: ${nftId} (${outcome})`;
   }
 
   private getHelpMessage(): string {
